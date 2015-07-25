@@ -7,8 +7,7 @@ module.exports = {
       console.log("getting messages from db")
       var connection = db.connectToDB();
       connection.query(
-        "SELECT * FROM messages",
-        "SELECT message.id, users.username, rooms.roomname FROM messages",
+        "SELECT messages.id, messages.text, users.username, rooms.roomname FROM messages JOIN users on messages.user_id = users.id LEFT OUTER JOIN rooms on messages.room_id = rooms.id",
         function(err, res){
           if (err){
             throw err;
@@ -25,16 +24,25 @@ module.exports = {
       var connection = db.connectToDB();
       console.log(connection.escape(data.text));
       connection.query(
-        "INSERT INTO messages (text, user_id) VALUES (" + connection.escape(data.text) +
-        ", (SELECT id FROM users WHERE username = '" + data.username + "'))",
+        "INSERT IGNORE INTO rooms (roomname) VALUES (?)", [data.roomname],
         function(err, res){
           if(err){ 
             throw err;
           }
-          console.log(res);
+          connection.query(
+            "INSERT INTO messages (text, user_id, room_id) VALUES (" + connection.escape(data.text) +
+            ", (SELECT id FROM users WHERE username = '" + data.username +
+            "'), (SELECT id FROM rooms WHERE roomname = '" + data.roomname + "'))",
+            function(err, res){
+              if(err){ 
+                throw err;
+              }
+              console.log(res);
+              db.disconnectFromDB(connection);
+            }
+          );
         }
       );
-      db.disconnectFromDB(connection);
       console.log("completed post");
 
     } // a function which can be used to insert a message into the database
