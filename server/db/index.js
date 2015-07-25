@@ -2,26 +2,21 @@ var mysql = require('mysql');
 
 // Create a database connection and export it from this file.
 
-var dbConnection = mysql.createConnection({
-  host: 'localhost',
-  user: 'hackreactor',
-  password: 'password',
-  database: 'chat'
-});
 
+exports.connectToDB = function(){
+  var dbConnection = mysql.createConnection({
+    host: 'localhost',
+    user: 'hackreactor',
+    password: 'password',
+    database: 'chat'
+  });
+  dbConnection.connect();
+  return dbConnection;
+}
 
-module.exports = dbConnection;
-
-
-
-// exports.connectToDB = function(){
-//   dbConnection.connect();
-//   return dbConnection;
-// }
-
-// exports.disconnectFromDB = function(connection){
-//   connection.end()
-// }
+exports.disconnectFromDB = function(connection){
+  connection.end()
+}
 
 // var dbConnection = mysql.createConnection({
 //       host: 'localhost',

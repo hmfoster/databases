@@ -11,7 +11,10 @@ module.exports = {
   messages: {
     get: function (req, res) {
       // want to get the list of messages
-
+      models.messages.get(function(data){
+        console.log("data", data);
+        res.send({success: true, results: data});  
+      });
       // invoke models.messages.get function
       // (asynchronous)
       // once we get the response
