@@ -31,6 +31,21 @@ $(function() {
       app.startSpinner();
       app.fetch(false);
 
+
+      $.ajax({
+        url: "http://127.0.0.1:3000/classes/users",
+        type: 'POST',
+        data: JSON.stringify({username: app.username}),
+        contentType: 'application/json',
+        success: function (data) {
+          console.log('chatterbox: Username sent');
+          // Trigger a fetch to update the messages, pass true to animate
+        },
+        error: function (data) {
+          console.error('chatterbox: Failed to send username');
+        }
+      });
+
       // Poll for new messages
       setInterval(app.fetch, 3000);
     },

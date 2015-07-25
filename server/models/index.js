@@ -1,8 +1,6 @@
 var db = require('../db');
 
 
-
-
 module.exports = {
   messages: {
     get: function () {}, // a function which produces all the messages
@@ -11,8 +9,21 @@ module.exports = {
 
   users: {
     // Ditto as above.
-    get: function () {},
-    post: function () {}
+    get: function () {  },
+    post: function (data) {
+      // connect
+      db.connect();
+      db.query(
+        'INSERT INTO users (username) VALUES (?)', [data.username],
+        function(err, res){
+          if(err){ 
+            throw err;
+          }
+          console.log(res);
+        }
+      );
+      db.end();
+    }
   }
 };
 
