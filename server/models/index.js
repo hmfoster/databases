@@ -10,8 +10,8 @@ module.exports = {
       //query database to get user_id
       // db.connect();
       db.query(
-        'INSERT INTO messages (text, user_id) VALUES (?, ?)', [data.text,
-          ("SELECT id FROM users WHERE username = (?)", [data.username])],
+        "INSERT INTO messages (text, user_id) VALUES ('" + data.text +
+        "', (SELECT id FROM users WHERE username = '" + data.username + "'))",
         function(err, res){
           if(err){ 
             throw err;
