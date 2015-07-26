@@ -6,9 +6,6 @@ var db = require('./db');
 var morgan = require('morgan');
 var parser = require('body-parser');
 
-// Set up database
-db.useSequelize();
-
 // Router
 var router = require('./routes.js');
 
