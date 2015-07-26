@@ -12,7 +12,7 @@ module.exports = {
     get: function (req, res) {
       // want to get the list of messages
       models.messages.get(function(data){
-        console.log("data", data);
+        // console.log("data", data);
         res.send({success: true, results: data});  
       });
       // invoke models.messages.get function
@@ -22,7 +22,7 @@ module.exports = {
 
     }, // a function which handles a get request for all messages
     post: function (req, res) {
-      console.log("request data:", req.body);
+      //console.log("request data:", req.body);
       models.messages.post(req.body);
       // pass the info to model.users.post
       res.send({success: true});

@@ -10,12 +10,18 @@ var User = db.define('User', {
   });
 
 var Message = db.define('Message', {
-    text: Sequelize.STRING,
-    roomname: Sequelize.STRING
+    text: Sequelize.STRING
+  });
+
+var Room = db.define('Room', {
+    roomname: {type: Sequelize.STRING, unique: true}
   });
 
 User.hasMany(Message, {foreignKey: 'user_id'});
 Message.belongsTo(User, {foreignKey: 'user_id'});
+
+Room.hasMany(Message, {foreignKey: 'room_id'});
+Message.belongsTo(Room, {foreignKey: 'room_id'});
 
 db.sync(); // => promise
 
@@ -25,27 +31,31 @@ module.exports = {
       //get messages from DB using a query
       Message.findAll({attributes: ['id', 'text'],
         include: [
-          { model: User }
+          { model: User }, { model: Room }
           ]})
         .then(function(messages){
           var response = messages.map(function(message){
             return {
               objectId: message.id,
               text: message.text,
-              username: message.User.username
+              username: message.User.username,
+              roomname: message.Room ? message.Room.roomname : "lobby"
             };
           });
-          console.log("response", response);
           cb(response);
         });
     }, // a function which produces all the messages
     post: function (data) {
+      var user, room;
       User.findOne({where: {username: data.username}})
-        .then(function(user){
-          user.createMessage({text: data.text})
-          // var message = Message.build();
-          // message.addUser(user);
-          // return message.save();
+        .then(function(res){
+          user = res;
+          console.log("data:", data);
+          return Room.findOrCreate({where: {roomname: data.roomname}});
+        }).then(function(res){
+          console.log("after attemt to create room:", res);
+          room = res;
+          user.createMessage({text: data.text, room_id: room.id});          
         }).then(function(){
           console.log("we are happy!");
         });
